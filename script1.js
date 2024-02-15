@@ -6,17 +6,18 @@ canvas.height = window.innerHeight;
 let c = canvas.getContext("2d");
 
 class Ball {
-  constructor() {
-    this.r = random(5, 20);
-    this.x = random(0 + this.r, window.innerWidth - this.r);
-    this.y = random(0 + this.r, window.innerHeight - this.r);
+  constructor(x, y) {
+    this.baseR = random(5, 30);
+    this.r = this.baseR;
+    this.x = x || random(0 + this.r, window.innerWidth - this.r);
+    this.y = y || random(0 + this.r, window.innerHeight - this.r);
     this.vx = random(-8, 8);
     this.vy = random(-8, 8);
     this.draw();
     this.rr = random(0, 255);
     this.g = random(0, 255);
     this.b = random(0, 255);
-    this.a = random(0, 1);
+    this.a = random(0.2, 1);
   }
 
   draw() {
@@ -41,7 +42,7 @@ class Ball {
 }
 
 const balls = [];
-for (let i = 0; i < 1000; i++) {
+for (let i = 0; i < 500; i++) {
   balls.push(new Ball());
 }
 
@@ -52,6 +53,23 @@ function animate() {
   });
   requestAnimationFrame(animate);
 }
+
+window.addEventListener("click", (e) => {
+  balls.push(new Ball(e.clientX, e.clientY));
+});
+
+window.addEventListener("mousemove", (e) => {
+  balls.forEach((ball) => {
+    let distance = Math.sqrt(
+      Math.pow(e.clientX - ball.x, 2) + Math.pow(e.clientY - ball.y, 2)
+    );
+    if (distance < 100 && ball.r < ball.baseR * 4) {
+      ball.r += 2;
+    } else if (ball.r > ball.baseR) {
+      ball.r -= 2;
+    }
+  });
+});
 
 animate();
 
